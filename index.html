@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Atomic Structure Challenge</title>
+<style>
+:root{
+  --navy:#14243b;--navy2:#203753;--mustard:#e6b943;--paper:#fff;
+  --ink:#172337;--muted:#64748b;--line:#d9e0e8;--good:#16845b;--bad:#c44444;
+}
+*{box-sizing:border-box}
+body{margin:0;background:#f4f6f8;color:var(--ink);font-family:Arial,Helvetica,sans-serif}
+header{background:var(--navy);color:white;padding:25px clamp(18px,4vw,52px);border-bottom:7px solid var(--mustard)}
+.header-inner{max-width:1200px;margin:auto;display:flex;justify-content:space-between;align-items:end;gap:20px;flex-wrap:wrap}
+.eyebrow{font-size:12px;font-weight:800;letter-spacing:2px;color:var(--mustard);text-transform:uppercase}
+h1{font-size:clamp(30px,5vw,52px);line-height:1;margin:8px 0 0;font-weight:900;letter-spacing:-1.5px}
+.header-note{color:#dbe4ee;font-size:14px;max-width:330px;line-height:1.5}
+main{max-width:1200px;margin:26px auto;padding:0 18px 45px}
+.topline{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:18px;flex-wrap:wrap}
+.progress{font-weight:800;color:var(--navy);font-size:14px}
+.score{background:#fff;border:1px solid var(--line);border-radius:9px;padding:10px 14px;font-weight:800}
+.layout{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(300px,.8fr);gap:20px;align-items:start}
+.panel{background:white;border:1px solid var(--line);border-radius:14px;overflow:hidden;box-shadow:0 5px 18px #14243b0b}
+.panel-head{background:var(--navy);color:white;padding:15px 19px;display:flex;justify-content:space-between;align-items:center;gap:12px}
+.panel-head h2{font-size:15px;letter-spacing:1.2px;margin:0;font-weight:900}
+.tag{font-size:11px;color:var(--navy);background:var(--mustard);font-weight:900;padding:6px 9px;border-radius:4px}
+.question{padding:22px}
+.question-label{font-size:12px;color:var(--muted);font-weight:900;letter-spacing:1.5px}
+.nuclide{display:flex;align-items:center;gap:15px;margin:12px 0 15px;flex-wrap:wrap}
+.element-symbol{font-size:55px;line-height:1;font-weight:900;color:var(--navy);letter-spacing:-2px}
+.element-name{font-size:22px;font-weight:900;color:var(--navy)}
+.isotope{font-size:15px;color:var(--muted);font-weight:700}
+.charge-pill{background:#f3e6bb;color:#5a4309;padding:8px 12px;border-radius:7px;font-weight:900;margin-left:auto}
+.instruction{line-height:1.55;color:#455468;margin:0 0 20px}
+.answer-grid{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:9px}
+.answer-card{min-width:0}
+.answer-card label{display:block;min-height:34px;background:var(--navy2);color:white;text-align:center;padding:9px 3px;font-size:clamp(9px,1.1vw,12px);font-weight:900;letter-spacing:.4px;border-radius:7px 7px 0 0}
+.answer-card input{width:100%;min-width:0;border:2px solid var(--line);border-top:0;border-radius:0 0 7px 7px;padding:14px 3px;text-align:center;font-size:clamp(19px,2.3vw,28px);font-weight:900;color:var(--navy);outline:none;background:#fbfcfd}
+.answer-card input:focus{border-color:var(--mustard);background:#fff}
+.answer-card input.correct{border-color:var(--good);background:#edfaf4}
+.answer-card input.incorrect{border-color:var(--bad);background:#fff1f1}
+.actions{display:flex;gap:9px;flex-wrap:wrap;margin-top:20px}
+button{border:0;border-radius:8px;padding:12px 16px;font-weight:900;font-size:13px;cursor:pointer;transition:.15s}
+button:hover{transform:translateY(-1px);filter:brightness(1.04)}
+.primary{background:var(--mustard);color:var(--navy)}
+.dark{background:var(--navy);color:white}
+.light{background:#edf1f5;color:var(--navy)}
+.feedback{margin-top:15px;padding:12px 14px;border-radius:8px;display:none;font-weight:700;line-height:1.45}
+.feedback.good{display:block;background:#eaf8f1;color:#126342}
+.feedback.bad{display:block;background:#fff1f1;color:#9c3030}
+.feedback.neutral{display:block;background:#fff8e6;color:#70520a}
+.hint{margin-top:12px;color:#536174;font-size:13px;line-height:1.5;min-height:20px}
+.model-wrap{padding:16px}
+.model-caption{font-size:12px;color:var(--muted);line-height:1.5;margin:10px 3px 0}
+#atom{display:block;width:100%;height:auto;max-height:340px;background:#fbfcfd;border:1px solid #e5eaf0;border-radius:10px}
+.legend{display:flex;gap:13px;flex-wrap:wrap;margin:12px 3px 0;font-size:11px;font-weight:800;color:#526174}
+.dot{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:5px}
+.explain{padding:16px 19px;border-top:1px solid var(--line);font-size:13px;line-height:1.55;color:#526174}
+.explain strong{color:var(--navy)}
+.rules{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:20px}
+.rule{background:var(--navy);color:white;border-radius:10px;padding:15px}
+.rule b{display:block;color:var(--mustard);font-size:13px;margin-bottom:5px;letter-spacing:.5px}
+.rule span{font-size:12px;line-height:1.45;color:#e1e8f0}
+footer{text-align:center;color:#8792a1;font-size:11px;padding:8px 15px 25px}
+@media(max-width:800px){.layout{grid-template-columns:1fr}.header-note{max-width:100%}}
+@media(max-width:480px){main{padding-left:10px;padding-right:10px}.question{padding:15px 11px}.answer-grid{gap:5px}.answer-card label{font-size:7px;letter-spacing:0;padding:8px 1px}.answer-card input{padding:13px 1px;font-size:18px}.rules{grid-template-columns:1fr}.charge-pill{margin-left:0}}
+</style>
+</head>
+<body>
+<header><div class="header-inner">
+  <div><div class="eyebrow">Chemistry • Practice Lab</div><h1>ATOMIC STRUCTURE<br>CHALLENGE</h1></div>
+  <div class="header-note">Read the isotope and ion. Work out the particles, mass number and charge — then check your answers.</div>
+</div></header>
+<main>
+  <div class="topline"><div class="progress" id="questionCount">QUESTION 1</div><div class="score">SCORE: <span id="score">0</span> / <span id="attempts">0</span></div></div>
+  <div class="layout">
+    <section class="panel">
+      <div class="panel-head"><h2>YOUR ATOMIC MISSION</h2><span class="tag">6 ANSWERS</span></div>
+      <div class="question">
+        <div class="question-label">IDENTIFY THE ATOM OR ION</div>
+        <div class="nuclide">
+          <div class="element-symbol" id="symbol">C</div>
+          <div><div class="element-name" id="elementName">Carbon</div><div class="isotope" id="isotope">Carbon-14</div></div>
+          <div class="charge-pill" id="chargeText">+2 ION</div>
+        </div>
+        <p class="instruction">Complete all six boxes. Remember: the number of protons identifies the element, while electrons determine the charge.</p>
+        <div class="answer-grid">
+          <div class="answer-card"><label for="atomicNumber">ATOMIC<br>NUMBER</label><input id="atomicNumber" type="number" min="0" placeholder="?" inputmode="numeric"></div>
+          <div class="answer-card"><label for="protons">PROTONS</label><input id="protons" type="number" min="0" placeholder="?" inputmode="numeric"></div>
+          <div class="answer-card"><label for="neutrons">NEUTRONS</label><input id="neutrons" type="number" min="0" placeholder="?" inputmode="numeric"></div>
+          <div class="answer-card"><label for="electrons">ELECTRONS</label><input id="electrons" type="number" min="0" placeholder="?" inputmode="numeric"></div>
+          <div class="answer-card"><label for="mass">MASS</label><input id="mass" type="number" min="0" placeholder="?" inputmode="numeric"></div>
+          <div class="answer-card"><label for="charge">CHARGE</label><input id="charge" type="number" placeholder="?" inputmode="numeric"></div>
+        </div>
+        <div class="actions">
+          <button class="primary" id="checkBtn">CHECK ANSWERS</button>
+          <button class="dark" id="nextBtn">NEXT QUESTION →</button>
+          <button class="light" id="tryBtn">TRY AGAIN</button>
+          <button class="light" id="solutionBtn">SHOW SOLUTION</button>
+        </div>
+        <div class="feedback" id="feedback" role="status" aria-live="polite"></div>
+        <div class="hint" id="hint">HINT: The mass number is the total number of protons and neutrons.</div>
+      </div>
+    </section>
+    <aside class="panel">
+      <div class="panel-head"><h2>BOHR ATOMIC MODEL</h2><span class="tag">LIVE MODEL</span></div>
+      <div class="model-wrap">
+        <canvas id="atom" width="520" height="390" aria-label="Bohr model showing the nucleus and electron shells"></canvas>
+        <div class="legend">
+          <span><i class="dot" style="background:#d95757"></i>PROTON</span>
+          <span><i class="dot" style="background:#64748b"></i>NEUTRON</span>
+          <span><i class="dot" style="background:#2876c7"></i>ELECTRON</span>
+        </div>
+        <p class="model-caption" id="modelCaption">The nucleus contains protons and neutrons. Electrons are arranged in energy shells.</p>
+      </div>
+      <div class="explain"><strong>Remember:</strong> A positive ion has lost electrons. A negative ion has gained electrons. The charge is protons minus electrons.</div>
+    </aside>
+  </div>
+  <div class="rules">
+    <div class="rule"><b>ATOMIC NUMBER</b><span>Number of protons. This tells you which element it is.</span></div>
+    <div class="rule"><b>MASS NUMBER</b><span>Protons + neutrons in the nucleus.</span></div>
+    <div class="rule"><b>ION CHARGE</b><span>Protons − electrons. Positive means fewer electrons.</span></div>
+  </div>
+</main>
+<footer>ATOMIC STRUCTURE CHALLENGE • Keep practising and build your chemistry confidence.</footer>
+<script>
+const elements=[
+ {n:"Hydrogen",s:"H",z:1},{n:"Helium",s:"He",z:2},{n:"Lithium",s:"Li",z:3},
+ {n:"Beryllium",s:"Be",z:4},{n:"Boron",s:"B",z:5},{n:"Carbon",s:"C",z:6},
+ {n:"Nitrogen",s:"N",z:7},{n:"Oxygen",s:"O",z:8},{n:"Fluorine",s:"F",z:9},
+ {n:"Neon",s:"Ne",z:10},{n:"Sodium",s:"Na",z:11},{n:"Magnesium",s:"Mg",z:12},
+ {n:"Aluminium",s:"Al",z:13},{n:"Silicon",s:"Si",z:14},{n:"Phosphorus",s:"P",z:15},
+ {n:"Sulfur",s:"S",z:16},{n:"Chlorine",s:"Cl",z:17},{n:"Argon",s:"Ar",z:18},
+ {n:"Potassium",s:"K",z:19},{n:"Calcium",s:"Ca",z:20}
+];
+const commonMass={1:[1,2],2:[4,3],3:[7,6],4:[9,10],5:[11,10],6:[12,13,14],7:[14,15],8:[16,17,18],9:[19],10:[20,22],11:[23],12:[24,25,26],13:[27],14:[28,29,30],15:[31],16:[32,33,34],17:[35,37],18:[40],19:[39,41],20:[40,42,44]};
+const $=id=>document.getElementById(id);
+let current=null,questionNo=0,score=0,attempts=0,checked=false;
+const fields=["atomicNumber","protons","neutrons","electrons","mass","charge"];
+function rand(a){return a[Math.floor(Math.random()*a.length)]}
+function makeQuestion(){
+ const el=rand(elements),mass=rand(commonMass[el.z]);
+ const possible=[0,0,0,1,-1];
+ if(el.z>2) possible.push(1,-1);
+ if(el.z>5) possible.push(2,-2);
+ if(el.z>10) possible.push(3,-3);
+ const charge=rand(possible);
+ const electrons=el.z-charge;
+ current={...el,mass,charge,electrons,neutrons:mass-el.z};
+ questionNo++;checked=false;
+ $("questionCount").textContent="QUESTION "+questionNo;
+ $("symbol").textContent=el.s;$("elementName").textContent=el.n;
+ $("isotope").textContent=el.n+"-"+mass;
+ $("chargeText").textContent=(charge>0?"+":"")+(charge===0?"0":charge)+" "+(charge===0?"NEUTRAL ATOM":"ION");
+ fields.forEach(f=>{const x=$(f);x.value="";x.className="";x.disabled=false});
+ $("feedback").className="feedback";$("feedback").textContent="";
+ $("hint").textContent="HINT: The mass number is the total number of protons and neutrons.";
+ $("checkBtn").disabled=false;
+ drawAtom();
+}
+function expected(){return {atomicNumber:current.z,protons:current.z,neutrons:current.neutrons,electrons:current.electrons,mass:current.mass,charge:current.charge}}
+function check(){
+ if(checked)return;
+ const ans=expected();let right=0,missing=0;
+ fields.forEach(f=>{
+  const input=$(f),v=input.value.trim();
+  input.classList.remove("correct","incorrect");
+  if(v===""){missing++;input.classList.add("incorrect");return}
+  if(Number(v)===ans[f]){right++;input.classList.add("correct")}else input.classList.add("incorrect");
+ });
+ attempts++;$("attempts").textContent=attempts;
+ if(right===6){
+  score++;$("score").textContent=score;checked=true;
+  $("feedback").className="feedback good";$("feedback").textContent="Excellent! All six answers are correct. You have mastered this atom or ion.";
+  $("hint").textContent="Great work. Select NEXT QUESTION to try another isotope or ion.";
+ }else{
+  $("feedback").className="feedback bad";
+  $("feedback").textContent=right+" out of 6 correct."+(missing?" Complete the empty box"+(missing>1?"es":"")+".":" Check the highlighted answers and try again.");
+  $("hint").textContent="HINT: Protons = atomic number. Neutrons = mass − protons. Electrons = protons − charge.";
+ }
+}
+function reveal(){
+ const a=expected();fields.forEach(f=>{$(f).value=a[f];$(f).classList.remove("incorrect");$(f).classList.add("correct")});
+ $("feedback").className="feedback neutral";$("feedback").textContent="Solution revealed. Compare each value with the atom model and the rules below.";
+ $("hint").textContent="Protons identify the element; neutrons complete the isotope's mass; electrons determine the charge.";
+ checked=true;
+}
+function tryAgain(){
+ fields.forEach(f=>{$(f).value="";$(f).className=""});
+ $("feedback").className="feedback";$("feedback").textContent="";
+ $("hint").textContent="Try again. Remember: charge = protons − electrons.";
+ checked=false;
+}
+function drawAtom(){
+ const c=$("atom"),ctx=c.getContext("2d"),w=c.width,h=c.height;
+ ctx.clearRect(0,0,w,h);
+ const cx=w/2,cy=h/2,radii=[65,112,158];
+ // shell rings
+ ctx.strokeStyle="#d7dee7";ctx.lineWidth=2;
+ radii.forEach((r,i)=>{if(i<3){ctx.beginPath();ctx.arc(cx,cy,r,0,Math.PI*2);ctx.stroke()}});
+ // nucleus particles, visually illustrative (not to scale)
+ const countP=current.z,countN=current.neutrons,total=countP+countN;
+ const dots=[];
+ for(let i=0;i<total;i++){
+  const angle=i*2.399,rad=total<2?0:Math.sqrt(i/total)*29;
+  dots.push({x:cx+Math.cos(angle)*rad,y:cy+Math.sin(angle)*rad,type:i<countP?"p":"n"});
+ }
+ dots.forEach(d=>{ctx.beginPath();ctx.arc(d.x,d.y,6.5,0,Math.PI*2);ctx.fillStyle=d.type==="p"?"#d95757":"#64748b";ctx.fill();ctx.strokeStyle="#fff";ctx.lineWidth=1.5;ctx.stroke()});
+ // electrons by shell capacity 2, 8, 8 for the first 18; simplified outer-shell display through 20
+ let remaining=current.electrons,idx=0;
+ const capacities=[2,8,8,2];
+ capacities.forEach((cap,si)=>{
+  const n=Math.min(remaining,cap);remaining-=n;
+  for(let j=0;j<n;j++){
+   const angle=(Math.PI*2*j/n)+(si%2?Math.PI/8:0)-Math.PI/2;
+   const x=cx+Math.cos(angle)*radii[si],y=cy+Math.sin(angle)*radii[si];
+   ctx.beginPath();ctx.arc(x,y,7,0,Math.PI*2);ctx.fillStyle="#2876c7";ctx.fill();
+   ctx.strokeStyle="#fff";ctx.lineWidth=2;ctx.stroke();idx++;
+  }
+ });
+ ctx.fillStyle="#14243b";ctx.font="bold 13px Arial";ctx.textAlign="center";
+ ctx.fillText(current.s+"  •  "+current.mass,cx,24);
+ $("modelCaption").textContent=current.n+" has "+current.z+" protons, "+current.neutrons+" neutrons and "+current.electrons+" electrons. The model shows electrons arranged in shells (simplified Bohr model).";
+}
+$("checkBtn").addEventListener("click",check);
+$("nextBtn").addEventListener("click",makeQuestion);
+$("tryBtn").addEventListener("click",tryAgain);
+$("solutionBtn").addEventListener("click",reveal);
+fields.forEach((f,i)=>$(f).addEventListener("keydown",e=>{if(e.key==="Enter"){if(i===fields.length-1)check();else $(fields[i+1]).focus()}}));
+makeQuestion();
+</script>
+</body>
+</html>
